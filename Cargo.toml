@@ -1,0 +1,24 @@
+[package]
+name = "free-list"
+version = "0.3.0"
+authors = ["Martin Kröning <mkroening@posteo.net>"]
+edition = "2021"
+description = "A free-list-based page/frame allocator."
+repository = "https://github.com/mkroening/free-list"
+license = "MIT OR Apache-2.0"
+keywords = ["allocator", "page", "frame", "memory", "free-list"]
+categories = ["memory-management", "no-std"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[dependencies]
+align-address = "0.3"
+smallvec = { version = "1", features = ["const_new", "const_generics", "union"] }
+
+[target.'cfg(target_arch = "x86_64")'.dependencies]
+x86_64 = { version = "0.15", optional = true, default-features = false }
+
+[features]
+x86_64 = ["dep:x86_64"]
