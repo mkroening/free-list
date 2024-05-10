@@ -21,6 +21,7 @@
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![warn(missing_docs)]
+#![doc(test(attr(deny(warnings))))]
 
 #[doc = include_str!("../README.md")]
 #[cfg(doctest)]
@@ -86,6 +87,7 @@ impl<const N: usize> FreeList<N> {
     /// # Examples
     ///
     /// ```
+    /// # #![allow(unused_variables)]
     /// use free_list::FreeList;
     ///
     /// let free_list = FreeList::<16>::new();

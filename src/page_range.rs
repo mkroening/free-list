@@ -37,6 +37,7 @@ impl PageRange {
     /// # Examples
     ///
     /// ```
+    /// # #![allow(unused_variables)]
     /// use free_list::PageRange;
     ///
     /// let range = PageRange::new(0x1000, 0x5000).unwrap();
@@ -75,6 +76,7 @@ impl PageRange {
     /// # Examples
     ///
     /// ```
+    /// # #![allow(unused_variables)]
     /// use free_list::PageRange;
     ///
     /// let range = PageRange::from_start_len(0x1000, 0x4000).unwrap();
