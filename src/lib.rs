@@ -164,6 +164,38 @@ impl<const N: usize> FreeList<N> {
         self.list.remove(range).map_err(|_| AllocError)
     }
 
+    /// Attempts to allocate a page range outside of a given page range.
+    ///
+    /// On success, returns a [`PageRange`] meeting the size and alignment guarantees of `layout` outside of `range`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use free_list::{FreeList, PageLayout, PageRange};
+    ///
+    /// let mut free_list = FreeList::<16>::new();
+    ///
+    /// unsafe {
+    ///     free_list.deallocate((0x1000..0x5000).try_into().unwrap()).unwrap();
+    /// }
+    ///
+    /// let layout = PageLayout::from_size(0x1000).unwrap();
+    /// let range = PageRange::new(0x0000, 0x2000).unwrap();
+    /// let allocated = free_list.allocate_outside_of(layout, range);
+    /// assert_eq!(allocated.unwrap(), (0x2000..0x3000).try_into().unwrap());
+    /// ```
+    pub fn allocate_outside_of(
+        &mut self,
+        layout: PageLayout,
+        range: PageRange,
+    ) -> Result<PageRange, AllocError> {
+        self.allocate_with(|entry| match entry - range {
+            PageRangeSub::None => None,
+            PageRangeSub::One(a) => a.fit(layout),
+            PageRangeSub::Two(a, b) => a.fit(layout).or_else(|| b.fit(layout)),
+        })
+    }
+
     /// Attempts to allocate a page range according to a function.
     ///
     /// On success, allocates and returns the first non-none [`PageRange`] returned by `f`.
@@ -204,38 +236,6 @@ impl<const N: usize> FreeList<N> {
         self.list.remove_at(index, fit).unwrap();
 
         Ok(fit)
-    }
-
-    /// Attempts to allocate a page range outside of a given page range.
-    ///
-    /// On success, returns a [`PageRange`] meeting the size and alignment guarantees of `layout` outside of `range`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use free_list::{FreeList, PageLayout, PageRange};
-    ///
-    /// let mut free_list = FreeList::<16>::new();
-    ///
-    /// unsafe {
-    ///     free_list.deallocate((0x1000..0x5000).try_into().unwrap()).unwrap();
-    /// }
-    ///
-    /// let layout = PageLayout::from_size(0x1000).unwrap();
-    /// let range = PageRange::new(0x0000, 0x2000).unwrap();
-    /// let allocated = free_list.allocate_outside_of(layout, range);
-    /// assert_eq!(allocated.unwrap(), (0x2000..0x3000).try_into().unwrap());
-    /// ```
-    pub fn allocate_outside_of(
-        &mut self,
-        layout: PageLayout,
-        range: PageRange,
-    ) -> Result<PageRange, AllocError> {
-        self.allocate_with(|entry| match entry - range {
-            PageRangeSub::None => None,
-            PageRangeSub::One(a) => a.fit(layout),
-            PageRangeSub::Two(a, b) => a.fit(layout).or_else(|| b.fit(layout)),
-        })
     }
 
     /// Returns how much free space this allocator has in bytes.
