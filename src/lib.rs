@@ -10,7 +10,7 @@
 //! let mut free_list = FreeList::<16>::new();
 //!
 //! unsafe {
-//!     free_list.deallocate((0x1000..0x5000).try_into().unwrap());
+//!     free_list.deallocate((0x1000..0x5000).try_into().unwrap()).unwrap();
 //! }
 //! assert_eq!(free_list.free_space(), 0x4000);
 //!
@@ -53,7 +53,7 @@ pub const PAGE_SIZE: usize = 4096;
 /// let mut free_list = FreeList::<16>::new();
 ///
 /// unsafe {
-///     free_list.deallocate((0x1000..0x5000).try_into().unwrap());
+///     free_list.deallocate((0x1000..0x5000).try_into().unwrap()).unwrap();
 /// }
 /// assert_eq!(free_list.free_space(), 0x4000);
 ///
@@ -104,7 +104,7 @@ impl<const N: usize> FreeList<N> {
     /// let mut free_list = FreeList::<16>::new();
     ///
     /// unsafe {
-    ///     free_list.deallocate((0x1000..0x5000).try_into().unwrap());
+    ///     free_list.deallocate((0x1000..0x5000).try_into().unwrap()).unwrap();
     /// }
     ///
     /// let layout = PageLayout::from_size(0x4000).unwrap();
@@ -148,8 +148,8 @@ impl<const N: usize> FreeList<N> {
     /// let mut free_list = FreeList::<16>::new();
     ///
     /// unsafe {
-    ///     free_list.deallocate((0x1000..0x2000).try_into().unwrap());
-    ///     free_list.deallocate((0x3000..0x4000).try_into().unwrap());
+    ///     free_list.deallocate((0x1000..0x2000).try_into().unwrap()).unwrap();
+    ///     free_list.deallocate((0x3000..0x4000).try_into().unwrap()).unwrap();
     /// }
     ///
     /// free_list.allocate_at((0x3000..0x4000).try_into().unwrap()).unwrap();
@@ -170,8 +170,8 @@ impl<const N: usize> FreeList<N> {
     /// let mut free_list = FreeList::<16>::new();
     ///
     /// unsafe {
-    ///     free_list.deallocate((0x1000..0x2000).try_into().unwrap());
-    ///     free_list.deallocate((0x3000..0x4000).try_into().unwrap());
+    ///     free_list.deallocate((0x1000..0x2000).try_into().unwrap()).unwrap();
+    ///     free_list.deallocate((0x3000..0x4000).try_into().unwrap()).unwrap();
     /// }
     ///
     /// let layout = PageLayout::from_size(0x1000).unwrap();
@@ -212,7 +212,7 @@ impl<const N: usize> FreeList<N> {
     /// let mut free_list = FreeList::<16>::new();
     ///
     /// unsafe {
-    ///     free_list.deallocate((0x1000..0x5000).try_into().unwrap());
+    ///     free_list.deallocate((0x1000..0x5000).try_into().unwrap()).unwrap();
     /// }
     ///
     /// let layout = PageLayout::from_size(0x1000).unwrap();
@@ -242,7 +242,7 @@ impl<const N: usize> FreeList<N> {
     /// let mut free_list = FreeList::<16>::new();
     ///
     /// unsafe {
-    ///     free_list.deallocate((0x1000..0x5000).try_into().unwrap());
+    ///     free_list.deallocate((0x1000..0x5000).try_into().unwrap()).unwrap();
     /// }
     /// assert_eq!(free_list.free_space(), 0x4000);
     /// ```

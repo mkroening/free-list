@@ -12,7 +12,7 @@ use free_list::{FreeList, PageLayout};
 let mut free_list = FreeList::<16>::new();
 
 unsafe {
-    free_list.deallocate((0x1000..0x5000).try_into().unwrap());
+    free_list.deallocate((0x1000..0x5000).try_into().unwrap()).unwrap();
 }
 assert_eq!(free_list.free_space(), 0x4000);
 
