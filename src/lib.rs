@@ -50,6 +50,8 @@ pub const PAGE_SIZE: usize = 4096;
 ///
 /// The `const N: usize` generic specifies how many internal [`PageRange`]s the free list can hold before needing to allocate more memory from the global allocator.
 ///
+/// Before allocating, the free list has to be provided a page range to allocate from via [`FreeList::deallocate`].
+///
 /// # Examples
 ///
 /// ```
@@ -125,6 +127,8 @@ impl<const N: usize> FreeList<N> {
     /// Attempts to allocate a page range.
     ///
     /// On success, returns a [`PageRange`] meeting the size and alignment guarantees of `layout`.
+    ///
+    /// This call can only succeed if the free list has previously been provided a free page range to allocate from via [`FreeList::deallocate`].
     ///
     /// # Examples
     ///
