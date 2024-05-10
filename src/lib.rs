@@ -98,28 +98,6 @@ impl<const N: usize> FreeList<N> {
         }
     }
 
-    /// Attempts to allocate a page range.
-    ///
-    /// On success, returns a [`PageRange`] meeting the size and alignment guarantees of `layout`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use free_list::{FreeList, PageLayout};
-    ///
-    /// let mut free_list = FreeList::<16>::new();
-    ///
-    /// unsafe {
-    ///     free_list.deallocate((0x1000..0x5000).try_into().unwrap()).unwrap();
-    /// }
-    ///
-    /// let layout = PageLayout::from_size(0x4000).unwrap();
-    /// assert_eq!(free_list.allocate(layout).unwrap(), (0x1000..0x5000).try_into().unwrap());
-    /// ```
-    pub fn allocate(&mut self, layout: PageLayout) -> Result<PageRange, AllocError> {
-        self.allocate_with(|range| range.fit(layout))
-    }
-
     /// Attempts to deallocates a page range.
     ///
     /// This should also be used to add more free pages to the allocator, such as after initialization.
@@ -142,6 +120,28 @@ impl<const N: usize> FreeList<N> {
     /// `range` must be valid to be allocated and used (again).
     pub unsafe fn deallocate(&mut self, range: PageRange) -> Result<(), AllocError> {
         self.list.add(range).map_err(|_| AllocError)
+    }
+
+    /// Attempts to allocate a page range.
+    ///
+    /// On success, returns a [`PageRange`] meeting the size and alignment guarantees of `layout`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use free_list::{FreeList, PageLayout};
+    ///
+    /// let mut free_list = FreeList::<16>::new();
+    ///
+    /// unsafe {
+    ///     free_list.deallocate((0x1000..0x5000).try_into().unwrap()).unwrap();
+    /// }
+    ///
+    /// let layout = PageLayout::from_size(0x4000).unwrap();
+    /// assert_eq!(free_list.allocate(layout).unwrap(), (0x1000..0x5000).try_into().unwrap());
+    /// ```
+    pub fn allocate(&mut self, layout: PageLayout) -> Result<PageRange, AllocError> {
+        self.allocate_with(|range| range.fit(layout))
     }
 
     /// Attempts to allocate a specific page range.
