@@ -32,8 +32,8 @@ impl PageLayout {
     /// * `align` must be a power of two,
     ///
     /// * `size`, when rounded up to the nearest multiple of `align`,
-    ///    must not overflow isize (i.e., the rounded value must be
-    ///    less than or equal to `isize::MAX`),
+    ///   must not overflow isize (i.e., the rounded value must be
+    ///   less than or equal to `isize::MAX`),
     ///
     /// * `size` and `align` must both be aligned to [`PAGE_SIZE`].
     #[inline]
