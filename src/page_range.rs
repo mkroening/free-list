@@ -214,9 +214,9 @@ impl PageRange {
     /// ```
     pub const fn fit(self, layout: PageLayout) -> Option<PageRange> {
         let start = usize_align_up(self.start, layout.align());
-        let range = match Self::from_start_len(start, layout.size()) {
-            Ok(range) => range,
-            Err(_) => unreachable!(),
+        // FIXME: use `.ok()?` instead, once possible in constant functions
+        let Ok(range) = Self::from_start_len(start, layout.size()) else {
+            return None;
         };
         if self.contains(range) {
             Some(range)
