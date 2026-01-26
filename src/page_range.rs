@@ -431,4 +431,16 @@ mod tests {
             &[0x2000..0x3000, 0x4000..0x5000],
         );
     }
+
+    #[test]
+    fn fit() {
+        let range = PageRange::new(0x1000, 0x5000).unwrap();
+        let layout = PageLayout::from_size_align(0x3000, 0x2000).unwrap();
+        let expected = PageRange::new(0x2000, 0x5000).unwrap();
+        assert_eq!(range.fit(layout), Some(expected));
+
+        let range = PageRange::new(0x1000, 0x5000).unwrap();
+        let layout = PageLayout::from_size_align(0, 0x2000).unwrap();
+        assert_eq!(range.fit(layout), None);
+    }
 }
