@@ -3,7 +3,7 @@ use core::fmt;
 use core::num::NonZeroUsize;
 use core::ops::{Add, Range, Sub};
 
-use align_address::{usize_align_up, usize_is_aligned_to};
+use align_address::{usize_checked_align_up, usize_is_aligned_to};
 
 use crate::{PageLayout, PAGE_SIZE};
 
@@ -213,8 +213,10 @@ impl PageRange {
     /// assert_eq!(range.fit(layout), Some(expected));
     /// ```
     pub const fn fit(self, layout: PageLayout) -> Option<PageRange> {
-        let start = usize_align_up(self.start, layout.align());
-        // FIXME: use `.ok()?` instead, once possible in constant functions
+        // FIXME: use `?` instead, once possible in constant functions
+        let Some(start) = usize_checked_align_up(self.start, layout.align()) else {
+            return None;
+        };
         let Ok(range) = Self::from_start_len(start, layout.size()) else {
             return None;
         };
@@ -441,6 +443,10 @@ mod tests {
 
         let range = PageRange::new(0x1000, 0x5000).unwrap();
         let layout = PageLayout::from_size_align(0, 0x2000).unwrap();
+        assert_eq!(range.fit(layout), None);
+
+        let range = PageRange::new(0xffff_ffff_ffff_0000, 0xffff_ffff_ffff_f000).unwrap();
+        let layout = PageLayout::from_size_align(0x1000, 0x10_0000).unwrap();
         assert_eq!(range.fit(layout), None);
     }
 }
