@@ -442,5 +442,9 @@ mod tests {
         let range = PageRange::new(0x1000, 0x5000).unwrap();
         let layout = PageLayout::from_size_align(0, 0x2000).unwrap();
         assert_eq!(range.fit(layout), None);
+
+        let range = PageRange::new(0xffff_ffff_ffff_0000, 0xffff_ffff_ffff_f000).unwrap();
+        let layout = PageLayout::from_size_align(0x1000, 0x10_0000).unwrap();
+        assert_eq!(range.fit(layout), None);
     }
 }
