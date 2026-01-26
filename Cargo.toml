@@ -14,7 +14,7 @@ all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
-align-address = "0.3"
+align-address = "0.4"
 smallvec = { version = "1", features = ["const_new", "const_generics", "union"] }
 
 [target.'cfg(target_arch = "x86_64")'.dependencies]
