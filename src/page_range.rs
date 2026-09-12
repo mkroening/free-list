@@ -5,7 +5,7 @@ use core::ops::{Add, Range, Sub};
 
 use align_address::{usize_align_down, usize_checked_align_up, usize_is_aligned_to};
 
-use crate::{PageLayout, PAGE_SIZE};
+use crate::{PAGE_SIZE, PageLayout};
 
 /// Invalid parameters in [`PageRange`] construction.
 #[non_exhaustive]

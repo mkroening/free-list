@@ -302,8 +302,8 @@ impl<const N: usize> fmt::Display for FreeList<N> {
 
 #[cfg(all(target_arch = "x86_64", feature = "x86_64"))]
 mod frame_allocator {
-    use x86_64::structures::paging::{FrameAllocator, FrameDeallocator, PageSize, PhysFrame};
     use x86_64::PhysAddr;
+    use x86_64::structures::paging::{FrameAllocator, FrameDeallocator, PageSize, PhysFrame};
 
     use super::*;
 
