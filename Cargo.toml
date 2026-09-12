@@ -5,7 +5,13 @@ edition = "2021"
 description = "A free-list-based page/frame allocator."
 repository = "https://github.com/mkroening/free-list"
 license = "MIT OR Apache-2.0"
-keywords = ["allocator", "page", "frame", "memory", "free-list"]
+keywords = [
+    "allocator",
+    "page",
+    "frame",
+    "memory",
+    "free-list",
+]
 categories = ["memory-management", "no-std"]
 
 [package.metadata.docs.rs]
