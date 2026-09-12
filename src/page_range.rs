@@ -3,7 +3,7 @@ use core::fmt;
 use core::num::NonZeroUsize;
 use core::ops::{Add, Range, Sub};
 
-use align_address::{usize_checked_align_up, usize_is_aligned_to};
+use align_address::{usize_align_down, usize_checked_align_up, usize_is_aligned_to};
 
 use crate::{PageLayout, PAGE_SIZE};
 
@@ -225,6 +225,41 @@ impl PageRange {
         } else {
             None
         }
+    }
+
+    /// Returns the page range containing the half-open address interval `start..end`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use free_list::PageRange;
+    ///
+    /// let range = PageRange::containing(0x1900, 0x4100).unwrap();
+    /// let expected = PageRange::new(0x1000, 0x5000).unwrap();
+    /// assert_eq!(range, expected);
+    /// ```
+    pub fn containing(start: usize, end: usize) -> Result<Self, PageRangeError> {
+        let start = usize_align_down(start, PAGE_SIZE);
+        let end = usize_checked_align_up(end, PAGE_SIZE).ok_or(PageRangeError)?;
+        Self::new(start, end)
+    }
+
+    /// Returns the intersection of `self` and `rhs` as a new `PageRange` if non-empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use free_list::PageRange;
+    ///
+    /// let lhs = PageRange::new(0x1000, 0x3000).unwrap();
+    /// let rhs = PageRange::new(0x2000, 0x5000).unwrap();
+    /// let expected = PageRange::new(0x2000, 0x3000).unwrap();
+    /// assert_eq!(lhs.and(rhs), Some(expected));
+    /// ```
+    pub fn and(self, rhs: Self) -> Option<Self> {
+        let start = self.start().max(rhs.start());
+        let end = self.end().min(rhs.end());
+        Self::new(start, end).ok()
     }
 }
 
