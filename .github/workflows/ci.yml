@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@stable
       - run: cargo clippy --all-targets --all-features
 
   doc:
@@ -21,7 +20,6 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@stable
       - run: cargo doc --all-features
 
   fmt:
@@ -29,9 +27,10 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@nightly
-        with:
-          components: rustfmt
+      - name: Install nightly rustfmt
+        run: |
+          rustup toolchain install --profile minimal --component rustfmt nightly
+          rustup default nightly
       - run: cargo fmt --all --check
 
   test:
@@ -39,5 +38,4 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@stable
       - run: cargo test --all-targets --all-features
