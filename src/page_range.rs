@@ -238,9 +238,11 @@ impl PageRange {
     /// let expected = PageRange::new(0x1000, 0x5000).unwrap();
     /// assert_eq!(range, expected);
     /// ```
-    pub fn containing(start: usize, end: usize) -> Result<Self, PageRangeError> {
+    pub const fn containing(start: usize, end: usize) -> Result<Self, PageRangeError> {
         let start = usize_align_down(start, PAGE_SIZE);
-        let end = usize_checked_align_up(end, PAGE_SIZE).ok_or(PageRangeError)?;
+        let Some(end) = usize_checked_align_up(end, PAGE_SIZE) else {
+            return Err(PageRangeError);
+        };
         Self::new(start, end)
     }
 
@@ -256,10 +258,21 @@ impl PageRange {
     /// let expected = PageRange::new(0x2000, 0x3000).unwrap();
     /// assert_eq!(lhs.and(rhs), Some(expected));
     /// ```
-    pub fn and(self, rhs: Self) -> Option<Self> {
-        let start = self.start().max(rhs.start());
-        let end = self.end().min(rhs.end());
-        Self::new(start, end).ok()
+    pub const fn and(self, rhs: Self) -> Option<Self> {
+        let start = if rhs.start() < self.start() {
+            self.start()
+        } else {
+            rhs.start()
+        };
+        let end = if rhs.end() < self.end() {
+            rhs.end()
+        } else {
+            self.end()
+        };
+        match Self::new(start, end) {
+            Ok(page_range) => Some(page_range),
+            Err(_) => None,
+        }
     }
 }
 
