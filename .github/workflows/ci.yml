@@ -5,8 +5,7 @@ on:
   pull_request:
 
 env:
-  RUSTFLAGS: -Dwarnings
-  RUSTDOCFLAGS: -Dwarnings
+  CARGO_BUILD_WARNINGS: deny
 
 jobs:
   clippy:
