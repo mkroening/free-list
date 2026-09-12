@@ -242,6 +242,29 @@ impl<const N: usize> FreeList<N> {
         Ok(fit)
     }
 
+    /// Returns an iterator over the free page ranges.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use free_list::{FreeList, PageRange};
+    ///
+    /// let mut free_list = FreeList::<16>::new();
+    ///
+    /// unsafe {
+    ///     free_list.deallocate((0x1000..0x2000).try_into().unwrap()).unwrap();
+    ///     free_list.deallocate((0x3000..0x4000).try_into().unwrap()).unwrap();
+    /// }
+    ///
+    /// let mut iterator = free_list.iter();
+    /// assert_eq!(iterator.next(), Some(PageRange::new(0x1000, 0x2000).unwrap()));
+    /// assert_eq!(iterator.next(), Some(PageRange::new(0x3000, 0x4000).unwrap()));
+    /// assert_eq!(iterator.next(), None);
+    /// ```
+    pub fn iter(&self) -> impl Iterator<Item = PageRange> + use<'_, N> {
+        self.list.iter()
+    }
+
     /// Returns how much free space this allocator has in bytes.
     ///
     /// # Examples
